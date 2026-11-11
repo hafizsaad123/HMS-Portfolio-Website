@@ -64,3 +64,6 @@ db/backups/
 
 # Z.ai skills (not part of the app)
 /skills/
+
+# downloadable build artifact (served for download, never committed)
+public/*.zip

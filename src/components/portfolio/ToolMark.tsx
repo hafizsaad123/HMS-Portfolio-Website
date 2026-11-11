@@ -1,23 +1,64 @@
 /**
- * Real brand logos for the Tools pills — official geometry & colors:
- *   • Figma  — official five-shape multicolor mark (256×384 grid)
- *   • Claude — Anthropic's official starburst mark (#D97757)
- *   • ChatGPT— OpenAI's official knot mark (black)
- *   • Adobe  — official red "A" mark (#FA0F00)
+ * Real brand logos for the Tools chips — official geometry & colors:
+ *   • Figma   — official five-shape multicolor mark (256×384 grid)
+ *   • Claude  — Anthropic's official starburst mark (#D97757)
+ *   • ChatGPT — OpenAI's official knot mark (black)
+ *   • Gemini  — Google's four-point sparkle, blue→purple gradient
+ *   • Photoshop / Illustrator / Premier Pro — official Adobe product
+ *     marks: rounded-square in the product's dark bg color with its
+ *     two-letter code in the product color (Ps #31A8FF on #001E36,
+ *     Ai #FF9A00 on #330000, Pr #EA77FF on #00005B)
+ *   • Adobe   — the red "A" master mark (legacy "Adobe Creative Suite")
  * Geometry from simple-icons (CC0) / official brand assets.
  */
 
-export type ToolId = "figma" | "claude" | "chatgpt" | "adobe";
+export type ToolId =
+  | "figma"
+  | "claude"
+  | "chatgpt"
+  | "adobe"
+  | "photoshop"
+  | "illustrator"
+  | "premier-pro"
+  | "gemini";
 
 const figmaMark = (w: number, h: number) => (
   <svg aria-hidden="true" focusable="false" viewBox="0 0 256 384" width={w} height={h} className="shrink-0">
     <path d="M64,384 C99.328,384 128,355.328 128,320 L128,256 L64,256 C28.672,256 0,284.672 0,320 C0,355.328 28.672,384 64,384 Z" fill="#0ACF83" />
-    <path d="M0,192 C0,156.672 28.672,128 64,128 L128,128 L128,256 L64,256 C28.672,256 0,227.328 0,192 Z" fill="#A259FF" />
-    <path d="M0,64 C0,28.672 28.672,0 64,0 L128,0 L128,128 L64,128 C28.672,128 0,99.328 0,64 Z" fill="#F24E1E" />
+    <path d="M0,192 C0,156.672 28.672,128 64,128 L128,128 L128,256 L64,256 C0,227.328 0,192 Z" fill="#A259FF" />
+    <path d="M0,64 C0,28.672 28.672,0 64,0 L128,0 L128,128 L64,128 C0,99.328 0,64 Z" fill="#F24E1E" />
     <path d="M128,0 L192,0 C227.328,0 256,28.672 256,64 C256,99.328 227.328,128 192,128 L128,128 L128,0 Z" fill="#FF7262" />
     <path d="M256,192 C256,227.328 227.328,256 192,256 C156.672,256 128,227.328 128,192 C128,156.672 156.672,128 192,128 C227.328,128 256,156.672 256,192 Z" fill="#1ABCFE" />
   </svg>
 );
+
+/** Official Adobe product icon — dark rounded square + two-letter code. */
+function adobeProductIcon(bg: string, fg: string, code: string, size: number) {
+  return (
+    <svg
+      aria-hidden="true"
+      focusable="false"
+      viewBox="0 0 38 38"
+      width={size}
+      height={size}
+      className="shrink-0"
+    >
+      <rect width="38" height="38" rx="8" fill={bg} />
+      <text
+        x="19"
+        y="24.4"
+        textAnchor="middle"
+        fontFamily="Arial, Helvetica, sans-serif"
+        fontWeight="700"
+        fontSize="14.5"
+        letterSpacing="0.2"
+        fill={fg}
+      >
+        {code}
+      </text>
+    </svg>
+  );
+}
 
 export function ToolMark({ id, size = 14 }: { id: ToolId; size?: number }) {
   if (id === "figma") {
@@ -29,6 +70,27 @@ export function ToolMark({ id, size = 14 }: { id: ToolId; size?: number }) {
       <span style={{ width: size, height: size }} className="inline-flex shrink-0 items-center justify-center">
         {figmaMark(w, size)}
       </span>
+    );
+  }
+  if (id === "photoshop") return adobeProductIcon("#001e36", "#31a8ff", "Ps", size);
+  if (id === "illustrator") return adobeProductIcon("#330000", "#ff9a00", "Ai", size);
+  if (id === "premier-pro") return adobeProductIcon("#00005b", "#ea77ff", "Pr", size);
+  if (id === "gemini") {
+    /* Google Gemini — the four-point sparkle in its blue→purple gradient. */
+    return (
+      <svg aria-hidden="true" focusable="false" width={size} height={size} viewBox="0 0 24 24" className="shrink-0">
+        <defs>
+          <linearGradient id="gemini-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#4285f4" />
+            <stop offset="55%" stopColor="#9b72cb" />
+            <stop offset="100%" stopColor="#d96570" />
+          </linearGradient>
+        </defs>
+        <path
+          fill="url(#gemini-grad)"
+          d="M12 0c.6 5.9 5.5 10.6 11.4 11.4l.6.1-.6.1C18.1 12.7 13.1 17.4 12.4 23.3l-.1.7-.1-.7C11.5 17.4 6.6 12.9 1.2 12.2L0 12l1.2-.2C6.6 11 11.4 6.2 12 .9L12 0z"
+        />
+      </svg>
     );
   }
   return (
@@ -46,10 +108,3 @@ export function ToolMark({ id, size = 14 }: { id: ToolId; size?: number }) {
     </svg>
   );
 }
-
-export const toolMarkByLabel: Record<string, ToolId> = {
-  Figma: "figma",
-  Claude: "claude",
-  ChatGPT: "chatgpt",
-  "Adobe Creative Suite": "adobe",
-};

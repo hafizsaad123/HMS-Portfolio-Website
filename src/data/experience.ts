@@ -22,10 +22,10 @@ export interface Experience {
 }
 
 export const experience: Experience[] = [
-  { company: "AI Matterz", role: "Founding Designer", period: "Dec 2025 - Present", markId: "ai-matterz", url: "https://aimatterz.io/" },
+  { company: "NovelOPS", role: "UI/UX Designer", period: "Dec 2025 - Present", markId: "novelops", url: "https://novelops.com.pk/" },
   { company: "Uplynk.pk", role: "Founding Designer", period: "Oct 2025 - May 2026", markId: "uplynk-pk", url: "https://uplynk.pk/" },
-  { company: "Surplus Pakistan", role: "Visual Graphic Designer", period: "Oct 2025 - Present", markId: "surplus-pakistan", url: "https://surplus.com.pk/" },
-  { company: "NovelOPS PVT LTD", role: "UI/UX Designer", period: "Dec 2025 - Present", markId: "novelops", url: "https://novelops.com.pk/" },
   { company: "Count3", role: "Founding Designer", period: "Oct 2025 - May 2026", markId: "count3", url: "https://count3.pk/" },
   { company: "SimulationsX", role: "Creative Graphic Designer", period: "Oct 2025 - May 2026", markId: "simulationsx", url: "https://simulationsx.com/" },
+  { company: "Surplus Pakistan", role: "Visual Graphic Designer", period: "Oct 2025 - Present", markId: "surplus-pakistan", url: "https://surplus.com.pk/" },
+  { company: "AI Matterz", role: "Founding Designer", period: "Dec 2025 - Present", markId: "ai-matterz", url: "https://aimatterz.io/" },
 ];

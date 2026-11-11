@@ -14,6 +14,7 @@
  */
 
 import { createPublicClient } from "@/utils/supabase/public";
+import { cache } from "react";
 import { createClient as createServerClient } from "@/utils/supabase/server";
 import {
   TABLES,
@@ -60,18 +61,12 @@ export const DEFAULT_SITE: SiteConfigData = {
 
 /** Page text defaults — exactly as in the approved designs. */
 export const DEFAULT_TEXTS: Record<string, string> = {
-  "about.badge": "Open to Work",
-  "about.hero.bold": "Multidisciplinary",
-  "about.hero.rest":
-    "designer crafting distinctive digital experiences and brand identities that challenge conventions and stand out.",
-  "about.p1":
-    "I’m a multidisciplinary designer passionate about creating digital products and visual identities that bring ideas to life. My work spans UI/UX design, web experiences, and brand identity, combining thoughtful strategy with purposeful visuals.",
-  "about.p2":
-    "I believe great design goes beyond aesthetics. It’s about making intentional decisions, challenging the expected, and creating meaningful experiences that people remember.",
-  "about.experienceHeading": "Work Experience",
-  "about.connectLine": "I Love Connecting With People Around the World.",
-  "about.metaDescription":
-    "Multidisciplinary designer crafting distinctive digital experiences and brand identities — about Hafiz Muhammad Saad, UI/UX designer & brand designer based in Karachi, Pakistan.",
+  "home.tools": "Tools",
+  "home.skills": "Skills",
+  "home.experience": "Experience",
+  "home.connect": "Connect With Me",
+  "home.resumeCard": "My Resume",
+  "home.projectsCard": "My Projects",
   "work.heading": "My Work",
   "work.subheading": "See my top insane high quality versatile projects",
   "work.metaDescription":
@@ -81,12 +76,51 @@ export const DEFAULT_TEXTS: Record<string, string> = {
 
 const DEFAULT_TOOLS: ToolData[] = [
   { label: "Figma", markId: "figma" },
-  { label: "Claude", markId: "claude" },
+  { label: "Adobe Photoshop", markId: "photoshop" },
+  { label: "Adobe Illustrator", markId: "illustrator" },
+  { label: "Adobe Premier Pro", markId: "premier-pro" },
   { label: "ChatGPT", markId: "chatgpt" },
-  { label: "Adobe Creative Suite", markId: "adobe" },
+  { label: "Claude", markId: "claude" },
+  { label: "Gemini", markId: "gemini" },
 ];
 
 const DEFAULT_SKILLS: string[] = defaultSite.skills;
+
+// ————————————————————————————————————————————————————————
+// Design-baseline adoption guard
+//
+// The live database still carries the PRE-redesign seed rows (shipped
+// before the approved November 2026 portfolio designs). As long as a
+// collection still shows its exact legacy signature below, the canonical
+// design content above is served instead — so the public site always
+// matches the approved designs. The guard is per-collection and flips
+// off automatically the moment the owner adopts the new content (via
+// the admin panel or supabase/design-update.sql): after that the
+// database is the source of truth again, admin edits included.
+// ————————————————————————————————————————————————————————
+
+/** Retired “Adobe Creative Suite” master chip — the definitive legacy
+ *  tools signature (the approved design replaced it with per-product
+ *  Photoshop / Illustrator / Premier Pro chips + Gemini). */
+const LEGACY_TOOL_MARK = "adobe";
+/** Legacy-only skill label dropped in the approved design. */
+const LEGACY_SKILL_LABEL = "Social Media Marketer";
+/** Legacy bio lead (the design uses “Brand and UI/UX Designer”). */
+const LEGACY_BIO_LEAD = "Multi-disciplinary";
+
+function isLegacyTools(rows: ToolData[]): boolean {
+  return rows.some((t) => t.markId === LEGACY_TOOL_MARK);
+}
+
+function isLegacySkills(rows: string[]): boolean {
+  return rows.includes(LEGACY_SKILL_LABEL);
+}
+
+function isLegacyExperience(rows: ExperienceData[]): boolean {
+  // legacy order led with AI Matterz and labelled the company “NovelOPS
+  // PVT LTD” — the approved design chip order starts at NovelOPS.
+  return rows[0]?.markId === "ai-matterz" || rows.some((r) => r.company === "NovelOPS PVT LTD");
+}
 
 /** Services diagram — 12 nodes in reading order; "" = solid (unlabeled). */
 const DEFAULT_SERVICES: ServiceNodeData[] = [
@@ -159,7 +193,11 @@ function fallbackProjects(): Project[] {
 // Public getters (fallback-safe — used by pages + /api/content)
 // ————————————————————————————————————————————————
 
-export async function getSiteConfig(): Promise<SiteConfigData> {
+/**
+ * Site identity — DB row 1 merged over defaults (fallback-safe).
+ * `cache`d so multiple calls during one request dedupe to a single query.
+ */
+export const getSiteConfig = cache(async (): Promise<SiteConfigData> => {
   try {
     const { data, error } = await createPublicClient()
       .from(TABLES.site)
@@ -169,15 +207,20 @@ export async function getSiteConfig(): Promise<SiteConfigData> {
     if (error) throw explainDbError(error);
     if (!data) return DEFAULT_SITE;
     const site = dbToApi<SiteConfigData & { updatedAt: string }>(data);
+    // legacy bio guard — the pre-redesign lead phrase means the owner
+    // hasn’t adopted the approved bio yet; serve the designed one.
+    const legacyBio = site.bioLead === LEGACY_BIO_LEAD;
     return {
       ...DEFAULT_SITE,
       ...site,
+      bioLead: legacyBio ? DEFAULT_SITE.bioLead : site.bioLead,
+      bio: legacyBio ? DEFAULT_SITE.bio : site.bio,
       updatedAt: site.updatedAt ?? undefined,
     };
   } catch {
     return DEFAULT_SITE;
   }
-}
+});
 
 /** All page texts — DB values merged over defaults (missing keys fall back). */
 export async function getTexts(): Promise<Record<string, string>> {
@@ -237,10 +280,18 @@ export async function getExperience(): Promise<ExperienceData[]> {
         company, role, period, markId, url: url ?? null,
       }));
     }
-    return (data as unknown as Array<Record<string, unknown>>).map((r) => {
+    const rows = (data as unknown as Array<Record<string, unknown>>).map((r) => {
       const row = dbToApi<ExperienceData>(r);
       return { company: row.company, role: row.role, period: row.period, markId: row.markId, url: row.url };
     });
+    // design-baseline guard — pre-redesign order/labels lose to the
+    // approved chip order until the owner adopts it.
+    if (isLegacyExperience(rows)) {
+      return defaultExperience.map(({ company, role, period, markId, url }) => ({
+        company, role, period, markId, url: url ?? null,
+      }));
+    }
+    return rows;
   } catch {
     return defaultExperience.map(({ company, role, period, markId, url }) => ({
       company, role, period, markId, url: url ?? null,
@@ -275,10 +326,15 @@ export async function getTools(): Promise<ToolData[]> {
       .order("created_at", { ascending: true });
     if (error) throw explainDbError(error);
     if (!data || data.length === 0) return DEFAULT_TOOLS;
-    return (data as unknown as Array<Record<string, unknown>>).map((r) => {
+    const rows = (data as unknown as Array<Record<string, unknown>>).map((r) => {
       const row = dbToApi<ToolData>(r);
       return { label: row.label, markId: row.markId };
     });
+    // design-baseline guard — the retired “Adobe Creative Suite” chip
+    // marks the pre-redesign seed; serve the approved 7-tool set until
+    // the owner adopts it (admin edit or design-update.sql).
+    if (isLegacyTools(rows)) return DEFAULT_TOOLS;
+    return rows;
   } catch {
     return DEFAULT_TOOLS;
   }
@@ -293,7 +349,11 @@ export async function getSkills(): Promise<string[]> {
       .order("created_at", { ascending: true });
     if (error) throw explainDbError(error);
     if (!data || data.length === 0) return DEFAULT_SKILLS;
-    return (data as unknown as Array<{ label: string }>).map((r) => r.label);
+    const rows = (data as unknown as Array<{ label: string }>).map((r) => r.label);
+    // design-baseline guard — pre-redesign skill list loses to the
+    // approved 8-skill set until the owner adopts it.
+    if (isLegacySkills(rows)) return DEFAULT_SKILLS;
+    return rows;
   } catch {
     return DEFAULT_SKILLS;
   }

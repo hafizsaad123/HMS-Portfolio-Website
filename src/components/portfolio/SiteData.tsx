@@ -54,38 +54,6 @@ export function useContent(initial?: ContentPayload) {
 // ————————————————————————————————————————————————
 // Loading / error states (match the site's design language)
 
-/** Sidebar-sized shimmering skeleton — used while the first fetch runs. */
-export function SidebarSkeleton() {
-  return (
-    <div className="relative w-full lg:h-dvh lg:w-[31%] lg:min-w-[397px] lg:shrink-0" aria-hidden="true">
-      <div className="flex h-full w-full flex-col gap-7 border border-line bg-white px-10 pt-10">
-        <div className="flex items-start gap-3.5">
-          <div className="h-[72px] w-[72px] shrink-0 animate-pulse rounded-[16px] bg-badge" />
-          <div className="flex w-full flex-col gap-2 pt-2">
-            <div className="h-3.5 w-3/5 animate-pulse rounded bg-badge" />
-            <div className="h-3 w-2/5 animate-pulse rounded bg-badge" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="h-2.5 w-4/5 animate-pulse rounded bg-badge" />
-          <div className="h-2.5 w-full animate-pulse rounded bg-badge" />
-          <div className="h-2.5 w-3/5 animate-pulse rounded bg-badge" />
-        </div>
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex flex-col gap-2.5">
-            <div className="h-2 w-14 animate-pulse rounded bg-badge" />
-            <div className="flex flex-wrap gap-1.5">
-              {Array.from({ length: 4 - i }).map((_, j) => (
-                <div key={j} className="h-6 w-20 animate-pulse rounded-full bg-badge" />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /** Centered spinner card for full-page loading (case study fallback page). */
 export function PageLoading({ label = "Loading…" }: { label?: string }) {
   return (

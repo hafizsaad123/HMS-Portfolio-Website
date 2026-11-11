@@ -17,6 +17,15 @@ export const updateSession = async (request: NextRequest) => {
     },
   });
 
+  // Fast path: no Supabase auth cookies → no session to refresh.
+  // Anonymous visitors (the entire public site) skip the network
+  // roundtrip entirely — the proxy stays in single-digit milliseconds
+  // instead of waiting on auth.getUser() for a session that can't exist.
+  const hasAuthCookies = request.cookies.getAll().some((c) => c.name.startsWith("sb-"));
+  if (!hasAuthCookies) {
+    return { supabaseResponse, user: null as null };
+  }
+
   const supabase = createServerClient(
     supabaseUrl!,
     supabaseKey!,

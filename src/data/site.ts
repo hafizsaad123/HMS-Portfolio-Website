@@ -14,9 +14,9 @@ export interface SocialLink {
 export const site = {
   name: "Hafiz Muhammad Saad",
   role: "UI/UX Designer & Brand Designer",
-  /** Sidebar bio — bold lead word + body, exactly as supplied. */
-  bioLead: "Multi-disciplinary",
-  bio: "product and visual designer helping ambitious founders and high-growth companies build exceptional digital products — from intuitive SaaS dashboards and mobile apps to distinctive brand system.",
+  /** Home bio — bold dotted-underlined lead + body, exactly as in the design. */
+  bioLead: "Brand and UI/UX Designer",
+  bio: "who runs the entire design and marketing function of a multi-company group as a solo designer. Over the past year I have delivered brand identities, SaaS landing pages, product UI/UX, ad creatives, video, and social campaigns across **6+ company brands**, working strategy first with a documented brand discovery and positioning process. I design work that looks premium, explains clearly, and converts.",
   email: "saad.designs4@gmail.com",
   location: "Karachi, Pakistan",
   /** Social profiles — real URLs supplied by Saad. */
@@ -31,16 +31,26 @@ export const site = {
    * honest notice instead of pretending to work.
    */
   resumeUrl: null as string | null,
-  tools: ["Figma", "Claude", "ChatGPT", "Adobe Creative Suite"],
+  tools: [
+    "Figma",
+    "Adobe Photoshop",
+    "Adobe Illustrator",
+    "Adobe Premier Pro",
+    "ChatGPT",
+    "Claude",
+    "Gemini",
+  ],
   skills: [
     "UI/UX Design",
     "Creative Graphic Design",
-    "Branding Expert",
+    "Brand Strategy",
     "AI Assisted Frontend Dev",
-    "Social Media Marketer",
+    "Video Editing",
     "Web Design",
+    "Brand Identity",
+    "Logo Design",
   ],
-  /** Sidebar experience pills — order as supplied in the exports. */
+  /** Experience pills — exact order from the approved design. */
   experience: [
     "NovelOPS",
     "Uplynk.pk",

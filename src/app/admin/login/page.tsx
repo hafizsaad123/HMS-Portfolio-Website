@@ -34,10 +34,19 @@ export default function AdminLoginPage() {
   async function onSubmit(event: React.FormEvent) {
     event.preventDefault();
     setError(null);
+
+    // Belt-and-braces email check — catches "saad" → "saad@…" typos before
+    // the request ever leaves the browser.
+    const trimmedEmail = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError("Enter your full email address — e.g. admin@saad.design");
+      return;
+    }
+
     setSubmitting(true);
     try {
       const { error: signInError } = await createClient().auth.signInWithPassword({
-        email: email.trim(),
+        email: trimmedEmail,
         password,
       });
 
@@ -47,6 +56,10 @@ export default function AdminLoginPage() {
           setError("Wrong email or password.");
         } else if (message.includes("email not confirmed")) {
           setError("Your account isn't confirmed yet — open Supabase → Authentication → Users and confirm it.");
+        } else if (message.includes("database error") || message.includes("unexpected_failure")) {
+          setError(
+            "Supabase Auth hit a broken user record — this happens when the admin user was created with SQL instead of the dashboard. Fix: Supabase → Authentication → Users → delete the broken user, then “Add user” to re-create it (tick Auto Confirm User)."
+          );
         } else if (message.includes("failed to fetch") || message.includes("fetch failed")) {
           setError("Couldn't reach Supabase — check the URL and key in .env.local.");
         } else {
@@ -136,11 +149,12 @@ export default function AdminLoginPage() {
           <p className="flex items-start gap-2 rounded-lg bg-badge px-3 py-2.5 text-[12.5px] leading-relaxed text-body">
             <KeyRound className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden="true" />
             <span>
-              First time here? Run <strong className="text-ink">supabase/migration.sql</strong> in the
-              Supabase SQL Editor — it creates the account{" "}
-              <strong className="text-ink">admin@saad.design</strong> /{" "}
-              <strong className="text-ink">saad2026</strong> (change it in Settings after your first
-              sign-in).
+              First time here? Create the admin in your Supabase dashboard —{" "}
+              <strong className="text-ink">Authentication → Users → Add user</strong> (email{" "}
+              <strong className="text-ink">admin@saad.design</strong>, password{" "}
+              <strong className="text-ink">saad2026</strong>, tick <em>Auto Confirm User</em>). Note:
+              auth users can never be created with SQL — Supabase rejects SQL-forged
+              rows with a “Database error”.
             </span>
           </p>
         </form>

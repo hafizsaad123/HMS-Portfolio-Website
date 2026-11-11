@@ -26,10 +26,30 @@ export function CopyEmailButton({
 
   async function copy() {
     try {
-      await navigator.clipboard.writeText(email);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(email);
+      } else {
+        throw new Error("clipboard api unavailable");
+      }
       setCopied(true);
     } catch {
-      setCopied(false);
+      // Fallback for non-secure contexts (http previews) and browsers where
+      // the async Clipboard API is blocked: a hidden textarea + execCommand.
+      // Still a real copy — never a fake success state.
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = email;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        if (ok) setCopied(true);
+      } catch {
+        setCopied(false);
+      }
     }
   }
 

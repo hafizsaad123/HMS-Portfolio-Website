@@ -82,7 +82,9 @@ const socialSchema = z.object({
 
 const toolSchema = z.object({
   label: z.string().trim().min(1, "Label is required"),
-  markId: z.enum(["figma", "claude", "chatgpt", "adobe"]).default("figma"),
+  markId: z
+    .enum(["figma", "photoshop", "illustrator", "premier-pro", "chatgpt", "claude", "gemini", "adobe"])
+    .default("figma"),
 });
 
 const skillSchema = z.object({

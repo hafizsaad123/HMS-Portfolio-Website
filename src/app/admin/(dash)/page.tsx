@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import {
   FolderKanban,
   BriefcaseBusiness,
-  Columns3,
   Images,
   History,
   FileText,
@@ -162,9 +161,8 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent className="grid gap-2">
             {[
-              { href: "/admin/sliders", icon: Columns3, title: "Change homepage images", desc: "The scrolling slider columns on the homepage" },
               { href: "/admin/content", icon: FileUp, title: "Upload resume (PDF)", desc: "Powers the “View Resume” button on your site" },
-              { href: "/admin/content", icon: FileText, title: "Edit page text", desc: "Headings, bio paragraphs, About & Work copy" },
+              { href: "/admin/content", icon: FileText, title: "Edit page text", desc: "Headings, section labels & card titles" },
               { href: "/admin/projects", icon: FolderKanban, title: "Manage projects", desc: "Add, reorder, feature or update project cards" },
               { href: "/admin/projects", icon: PenSquare, title: "Write case studies", desc: "Blog-style pages for every project — /work/<slug>" },
               { href: "/admin/media", icon: Upload, title: "Upload images", desc: `Media library · ${formatBytes(overview?.storageBytes ?? 0)} stored` },

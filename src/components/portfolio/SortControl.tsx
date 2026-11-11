@@ -31,7 +31,7 @@ export function SortControl({
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`Sort projects — currently ${label}`}
-          className="inline-flex h-11 items-center gap-2 rounded-full border border-line bg-white px-4 text-[13px] font-medium text-ink transition-colors hover:bg-badge focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[state=open]:bg-badge"
+          className="inline-flex h-9 items-center gap-2 rounded-full border border-line bg-white px-4 text-[13.5px] font-medium text-ink transition-colors hover:bg-badge focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring data-[state=open]:bg-badge"
         >
           {label}
           <ChevronDown className="h-4 w-4 text-soft" aria-hidden="true" />

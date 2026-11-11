@@ -128,98 +128,338 @@
        (kerning + standard ligatures) — no font-specific overrides. */
     font-feature-settings: "kern";
   }
+  /* Editorial line-breaking: headings balance, paragraphs break
+     pretty — the difference between set and unset text. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p,
+  li {
+    text-wrap: pretty;
+  }
   ::selection {
     background: color-mix(in srgb, #8750f6 22%, white);
   }
 }
 
 /* ————————————————————————————————————————————————
-   Home gallery — always-moving vertical sliders.
-   Four columns: outer two travel up, inner two travel down.
-   The track holds two identical lists; shifting by -50% of its own
-   height makes the loop seamless.
+   The dashed violet underline — the bio's signature style (measured
+   from the approved export): 1.5px dashed in the design's violet,
+   riding 5px below the near-black semibold words it carries.
+   Hover: the carried words bloom to brand purple and the dash
+   deepens — a quiet, discoverable micro-interaction.
    ———————————————————————————————————————————————— */
-@keyframes marquee-up {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-50%);
-  }
+.dash-underline {
+  color: var(--color-ink);
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 5px;
+  text-decoration-color: #8b7cf6;
+  transition:
+    color 0.3s ease,
+    text-decoration-color 0.3s ease;
 }
-
-@keyframes marquee-down {
-  from {
-    transform: translateY(-50%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-.marquee-track {
-  animation-duration: var(--marquee-duration, 50s);
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  will-change: transform;
-}
-
-.marquee-up {
-  animation-name: marquee-up;
-}
-
-.marquee-down {
-  animation-name: marquee-down;
+.dash-underline:hover {
+  color: var(--color-brand);
+  text-decoration-color: var(--color-brand);
 }
 
 /* ————————————————————————————————————————————————
-   RULE #1 — the sidebar never scrolls with the page.
-   At lg+ the page itself cannot scroll: only the main column does.
-   The sidebar is pinned to the viewport height. The bottom decor
-   (artwork / black tail) absorbs leftover space, shrinking fluidly;
-   on short viewports the rhythm compresses, the artwork hides, and
-   only as an invisible last resort does the content area scroll
-   internally (scrollbar hidden).
+   Dotted underline links — the connect-section signature style.
+   A quiet gray dotted underline that lights up purple on hover;
+   the underline also rises 1px, like it's taking a breath.
    ———————————————————————————————————————————————— */
-.sidebar-scroll {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+.dotted-link {
+  color: var(--color-body);
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-color: #c7cbd4;
+  transition:
+    color 0.25s ease,
+    text-decoration-color 0.25s ease,
+    text-underline-offset 0.25s ease;
 }
-.sidebar-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-/* …the sidebar rhythm is one consistent 28px gap at every width; it
-   compresses ONLY by viewport height, and gently (the pills/labels keep
-   their single size — only the section gap and outer padding breathe).
-   The generous 40px side padding NEVER compresses; top/bottom keep the
-   header below the top frame line (27px) and the last line above the
-   bottom frame band (33px line / 57px cascade). These plain rules win
-   over the layered Tailwind utilities. */
-@media (min-width: 1024px) and (max-height: 920px) {
-  .sidebar-body {
-    gap: 1.25rem; /* 20px */
-    padding-top: 2.25rem; /* 36px */
-    padding-bottom: 2.75rem; /* 44px */
-  }
-}
-@media (min-width: 1024px) and (max-height: 820px) {
-  .sidebar-body {
-    gap: 1rem; /* 16px */
-    padding-top: 2.125rem; /* 34px */
-    padding-bottom: 2.625rem; /* 42px */
-  }
+.dotted-link:hover {
+  color: var(--color-brand);
+  text-decoration-color: var(--color-brand);
+  text-underline-offset: 5px;
 }
 
-/* Too short for the artwork to read — the frame band (gradient bar +
-   squares + cascades) still closes the card's bottom edge on its own */
-@media (min-width: 1024px) and (max-height: 1020px) {
-  .sidebar-art {
-    display: none;
+/* ————————————————————————————————————————————————
+   Pixel clusters — the brand motif. Each square breathes on its own
+   schedule (staggered delays set inline), like city lights blinking.
+   ———————————————————————————————————————————————— */
+@keyframes pixel-blink {
+  0%,
+  100% {
+    opacity: 0.5;
   }
+  50% {
+    opacity: 1;
+  }
+}
+
+.pixel-dot {
+  animation: pixel-blink 3.6s ease-in-out infinite;
+  will-change: opacity;
+}
+
+/* ————————————————————————————————————————————————
+   The Studio Cursor — the brand pixel becomes the pointer.
+   (DOM + physics live in StudioCursor.tsx; everything here is
+   presentation. Position and stretch are written by the frame
+   loop — this sheet only styles the morphing forms.)
+   ———————————————————————————————————————————————— */
+
+/* the native cursor steps aside only where the custom one lives —
+   the class is added by JS after a hover + fine-pointer check */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+/* form fields keep their native caret — usability first */
+html.has-cursor
+  :where(
+    input:is(
+        [type="text"],
+        [type="email"],
+        [type="url"],
+        [type="password"],
+        [type="search"],
+        [type="tel"],
+        [type="number"],
+        [type="date"],
+        [type="datetime-local"],
+        [type="month"],
+        [type="week"],
+        [type="time"],
+        :not([type])
+      ),
+    textarea,
+    [contenteditable="true"],
+    .ProseMirror
+  ) {
+  cursor: text !important;
+}
+
+/* the cursor root — a fixed point riding the pointer */
+.studio-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  will-change: transform;
+}
+.studio-cursor.sc-live {
+  opacity: 1;
+}
+.studio-cursor[data-mode="hidden"] {
+  opacity: 0;
+}
+
+/* the stretch layer — rotate + scale written every frame */
+.sc-stretch {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+
+/* the morphing pixel — resting form: the brand square */
+.sc-morph {
+  position: relative;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  border-radius: 2.5px;
+  border: 1.5px solid transparent;
+  background: var(--color-brand);
+  transition:
+    width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+/* over paragraphs — the reading beam */
+.studio-cursor[data-mode="text"] .sc-morph {
+  width: 2.5px;
+  height: 22px;
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+/* over links and buttons — the focus frame */
+.studio-cursor[data-mode="focus"] .sc-morph {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.72);
+  border-color: var(--color-brand);
+  box-shadow: 0 10px 26px -12px rgba(23, 1, 70, 0.45);
+}
+
+/* the action dot inside the frame */
+.sc-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 1.5px;
+  background: var(--color-brand);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3);
+  transition:
+    opacity 0.15s ease,
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-cursor[data-mode="focus"][data-variant="dot"] .sc-dot {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* the outbound arrow inside the frame */
+.sc-arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 13px;
+  height: 13px;
+  color: var(--color-brand);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4) rotate(24deg);
+  transition:
+    opacity 0.15s ease,
+    transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-cursor[data-mode="focus"][data-variant="arrow"] .sc-arrow {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1) rotate(0deg);
+}
+
+/* reticle ticks at the frame's cardinal points */
+.sc-tick {
+  position: absolute;
+  background: var(--color-brand);
+  opacity: 0;
+  transition:
+    opacity 0.16s ease 0.03s,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) 0.03s;
+}
+.sc-tick.t-n {
+  top: 5px;
+  left: calc(50% - 0.75px);
+  width: 1.5px;
+  height: 5.5px;
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+}
+.sc-tick.t-s {
+  bottom: 5px;
+  left: calc(50% - 0.75px);
+  width: 1.5px;
+  height: 5.5px;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+}
+.sc-tick.t-w {
+  left: 5px;
+  top: calc(50% - 0.75px);
+  width: 5.5px;
+  height: 1.5px;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.sc-tick.t-e {
+  right: 5px;
+  top: calc(50% - 0.75px);
+  width: 5.5px;
+  height: 1.5px;
+  transform: scaleX(0);
+  transform-origin: 100% 50%;
+}
+.studio-cursor[data-mode="focus"] .sc-tick {
+  opacity: 0.9;
+}
+.studio-cursor[data-mode="focus"] .t-n,
+.studio-cursor[data-mode="focus"] .t-s {
+  transform: scaleY(1);
+}
+.studio-cursor[data-mode="focus"] .t-w,
+.studio-cursor[data-mode="focus"] .t-e {
+  transform: scaleX(1);
+}
+
+/* the pixel trail — a full-viewport canvas riding under the nav */
+.sc-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* ————————————————————————————————————————————————
+   Feature cards — the motion system.
+   The 3D tilt is set by framer-motion (restrained ±3°); the
+   illustration rides a counter-parallax driven by CSS vars
+   (--px/--py, 0..1, set by the same pointer handler) so the artwork
+   drifts 6-7px against the card's lean — depth instead of glow.
+   Touch + reduced-motion simply rest.
+   ———————————————————————————————————————————————— */
+.feat-art {
+  transform: translate3d(
+    calc((var(--px, 0.5) - 0.5) * -13px),
+    calc((var(--py, 0.5) - 0.5) * -9px),
+    0
+  );
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* the resume sheet's dog-ear — folds a touch further open while the
+   card is hovered: a detail you only notice the second time */
+.dogear {
+  transform-box: view-box;
+  transform-origin: 271px 42px;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tilt-card:hover .dogear {
+  transform: rotate(-9deg);
+}
+
+/* availability dot — a tiny live pulse next to the role line */
+@keyframes availability-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+.availability-dot {
+  animation: availability-pulse 2.4s ease-out infinite;
 }
 
 @layer utilities {
+  /* Tabular figures — the live clock and any numbers stay monospaced
+     so ticking minutes never jitter the line. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
   /* Custom scrollbar for the main scrolling column */
   .nice-scroll {
     scrollbar-width: thin;
@@ -237,10 +477,22 @@
     background: transparent;
   }
 
+  /* The framed canvas — the page is a card sitting inside the viewport */
+  .page-frame {
+    scrollbar-width: thin;
+    scrollbar-color: #dcdcdc transparent;
+  }
+
   /* Respect reduced motion everywhere; sliders hold still */
   @media (prefers-reduced-motion: reduce) {
-    .marquee-track {
-      animation-play-state: paused;
+    .pixel-dot,
+    .availability-dot {
+      animation: none !important;
+    }
+    .feat-art,
+    .dogear {
+      transition: none !important;
+      transform: none !important;
     }
     *,
     *::before,
@@ -489,151 +741,4 @@
 }
 .rich-edit .ProseMirror-gapcursor::after {
   border-top-color: var(--color-brand);
-}
-
-/* ————————————————————————————————————————————————
-   Skills spider web v2 (About page — rect nodes + elastic drag)
-   ———————————————————————————————————————————————— */
-.sw {
-  display: block;
-  overflow: visible;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
-.sw-measure {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-/* threads: hairline gray, they pass behind the nodes */
-.sw-line {
-  stroke: #d6d6d3;
-  stroke-width: 1.4;
-  pointer-events: none;
-  transition:
-    stroke 0.35s ease,
-    stroke-opacity 0.35s ease,
-    stroke-width 0.35s ease;
-}
-
-/* draw-in: hidden until JS mounts + scrolled into view (reduced motion / no-JS = fully drawn) */
-@media (prefers-reduced-motion: no-preference) {
-  .sw-live:not(.in-view) .sw-line {
-    stroke-dashoffset: var(--dash);
-    transition: none;
-  }
-  .sw-live.in-view .sw-line {
-    stroke-dashoffset: 0;
-    transition:
-      stroke-dashoffset 0.95s cubic-bezier(0.25, 0.8, 0.3, 1) var(--d, 0s),
-      stroke 0.35s ease,
-      stroke-opacity 0.35s ease,
-      stroke-width 0.35s ease;
-  }
-  .sw-live:not(.in-view) .sw-node-inner {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  .sw-live.in-view .sw-node-inner {
-    opacity: 1;
-    transform: translateY(0);
-    transition:
-      opacity 0.6s ease var(--nd, 0s),
-      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--nd, 0s);
-  }
-}
-
-/* hover / drag: the touched node's threads light up brand-purple, the rest recede */
-.sw.hovering .sw-line {
-  stroke-opacity: 0.26;
-}
-.sw.hovering .sw-line.lit {
-  stroke-opacity: 1;
-  stroke: var(--color-brand);
-  stroke-width: 1.7;
-}
-
-/* nodes — grabbable rectangles */
-.sw-node {
-  cursor: grab;
-  touch-action: pan-y;
-}
-.sw.dragging,
-.sw.dragging .sw-node {
-  cursor: grabbing;
-}
-.sw-hit {
-  fill: transparent;
-  pointer-events: all;
-}
-.sw-rect {
-  fill: #ffffff;
-  stroke: var(--color-line);
-  stroke-width: 1.5;
-  transition: stroke 0.3s ease;
-}
-.sw-rect[data-accent="brand"] {
-  fill: var(--color-brand);
-  stroke: none;
-}
-.sw-rect[data-accent="deep"] {
-  fill: var(--color-brand-deep);
-  stroke: none;
-}
-.sw-node.is-hover .sw-rect:not([data-accent]) {
-  stroke: var(--color-brand);
-}
-.sw-edot {
-  fill: #09090b;
-  transform-box: fill-box;
-  transform-origin: center;
-  transition: transform 0.3s ease;
-}
-.sw-node.is-hover .sw-edot,
-.sw-node.is-drag .sw-edot {
-  transform: scale(1.35);
-}
-.sw-label {
-  fill: var(--color-ink);
-  font-family: var(--font-sans);
-  font-weight: 500;
-}
-
-/* drag lift: the grabbed rect rises slightly above the web */
-.sw-node-lift {
-  transform-box: fill-box;
-  transform-origin: center;
-  transition:
-    transform 0.25s ease,
-    filter 0.25s ease;
-}
-.sw-node.is-drag .sw-node-lift {
-  transform: scale(1.03);
-  filter: drop-shadow(0 14px 22px rgba(17, 24, 39, 0.16));
-}
-
-/* reduced motion: everything rests in its final state, drag follows instantly */
-@media (prefers-reduced-motion: reduce) {
-  .sw-line {
-    stroke-dashoffset: 0 !important;
-    transition: none !important;
-  }
-  .sw-node-inner {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-  .sw-node-lift,
-  .sw-edot,
-  .sw-rect {
-    transition: none !important;
-  }
-  .sw-node.is-drag .sw-node-lift {
-    transform: none;
-    filter: none;
-  }
 }

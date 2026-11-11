@@ -85,6 +85,22 @@ git push -u origin main
 
 ---
 
+## Step 4 — Google Search Console (already wired in)
+
+The Google verification file ships in this repo at
+`public/google4d712eaef69a4461.html`, so it is served at the site root
+the moment this project is deployed — nothing to download or copy.
+
+1. Deploy (Step 2) — then confirm the file is live:
+   `https://hafiz-m-saad.vercel.app/google4d712eaef69a4461.html`
+2. Back in Search Console, click **VERIFY** — it turns green instantly.
+3. Search Console → **Sitemaps** → enter `sitemap.xml` → **Submit**.
+   (The sitemap lists every page + case study automatically.)
+4. To stay verified, don't remove the file — it lives in `public/` in this
+   repo, so every future deploy keeps verification alive automatically.
+
+---
+
 ## Verify everything
 
 | Check | Expected |
@@ -117,6 +133,7 @@ Database/seed status (already done — nothing to redo):
 
 | Symptom | Fix |
 |---|---|
+| Login error: **"Database error querying schema"** (500) | The admin user was created with SQL — GoTrue can't read it. In Supabase → **Authentication → Users**: delete the broken `admin@saad.design` row, then **Add user** to re-create it (tick **Auto Confirm User**). |
 | Deploy fails with "Invalid NEXT_PUBLIC_SUPABASE_URL" | Env vars missing in Vercel → add both → **Redeploy** |
 | Login says invalid credentials | Step 3 not done, or "Auto Confirm" wasn't checked — recreate the user |
 | Images broken on Vercel | Redeploy once (env vars added after first deploy need a rebuild) |

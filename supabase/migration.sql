@@ -279,7 +279,7 @@ insert into public.site_config
   (id, name, role, bio_lead, bio, email, location, resume_url, open_to_work,
    avatar_path, portrait_path, signature_path, artwork_path, updated_at)
 values
-  (1, 'Hafiz Muhammad Saad', 'UI/UX Designer & Brand Designer', 'Multi-disciplinary', 'product and visual designer helping ambitious founders and high-growth companies build exceptional digital products — from intuitive SaaS dashboards and mobile apps to distinctive brand system.',
+  (1, 'Hafiz Muhammad Saad', 'UI/UX Designer & Brand Designer', 'Brand and UI/UX Designer', 'who runs the entire design and marketing function of a multi-company group as a solo designer. Over the past year I have delivered brand identities, SaaS landing pages, product UI/UX, ad creatives, video, and social campaigns across **6+ company brands**, working strategy first with a documented brand discovery and positioning process. I design work that looks premium, explains clearly, and converts.',
    'saad.designs4@gmail.com', 'Karachi, Pakistan', null, true,
    '/images/profile.png', '/images/portrait.png', '/images/signature.png', '/images/mazar.png',
    '2026-10-24T19:21:32.678Z'::timestamptz)
@@ -321,12 +321,12 @@ begin
   if not exists (select 1 from public.experience) then
     insert into public.experience (id, company, role, period, mark_id, url, sort_order, created_at)
     values
-      ('cmvmr5ql8002jqugb5kcdzb7v', 'AI Matterz', 'Founding Designer', 'Dec 2025 - Present', 'ai-matterz', 'https://aimatterz.io/', 1, now()),
+      ('cmvmr5ql8002jqugb5kcdzb7v', 'NovelOPS', 'UI/UX Designer', 'Dec 2025 - Present', 'novelops', 'https://novelops.com.pk/', 1, now()),
       ('cmvmr5ql9002kqugbiwcc45bc', 'Uplynk.pk', 'Founding Designer', 'Oct 2025 - May 2026', 'uplynk-pk', 'https://uplynk.pk/', 2, now()),
-      ('cmvmr5qla002lqugbd9z47sz6', 'Surplus Pakistan', 'Visual Graphic Designer', 'Oct 2025 - Present', 'surplus-pakistan', 'https://surplus.com.pk/', 3, now()),
-      ('cmvmr5qlb002mqugbxuhr9v85', 'NovelOPS PVT LTD', 'UI/UX Designer', 'Dec 2025 - Present', 'novelops', 'https://novelops.com.pk/', 4, now()),
-      ('cmvmr5qlc002nqugb9jwj5q1z', 'Count3', 'Founding Designer', 'Oct 2025 - May 2026', 'count3', 'https://count3.pk/', 5, now()),
-      ('cmvmr5qld002oqugbhryc9oyn', 'SimulationsX', 'Creative Graphic Designer', 'Oct 2025 - May 2026', 'simulationsx', 'https://simulationsx.com/', 6, now());
+      ('cmvmr5qla002lqugbd9z47sz6', 'Count3', 'Founding Designer', 'Oct 2025 - May 2026', 'count3', 'https://count3.pk/', 3, now()),
+      ('cmvmr5qlb002mqugbxuhr9v85', 'SimulationsX', 'Creative Graphic Designer', 'Oct 2025 - May 2026', 'simulationsx', 'https://simulationsx.com/', 4, now()),
+      ('cmvmr5qlc002nqugb9jwj5q1z', 'Surplus Pakistan', 'Visual Graphic Designer', 'Oct 2025 - Present', 'surplus-pakistan', 'https://surplus.com.pk/', 5, now()),
+      ('cmvmr5qld002oqugbhryc9oyn', 'AI Matterz', 'Founding Designer', 'Dec 2025 - Present', 'ai-matterz', 'https://aimatterz.io/', 6, now());
   end if;
 end $$;
 
@@ -342,31 +342,36 @@ begin
   end if;
 end $$;
 
--- ——— tools — 4 rows · inserted only when the table is empty (no unique key) · created_at = now() ———
+-- ——— tools — 7 rows · inserted only when the table is empty (no unique key) · created_at = now() ———
 do $$
 begin
   if not exists (select 1 from public.tools) then
     insert into public.tools (id, label, mark_id, sort_order, created_at)
     values
-      ('cmvmr5qlh002squgbs6phpbkx', 'Figma', 'figma', 1, now()),
-      ('cmvmr5qlj002tqugb90lm6793', 'Claude', 'claude', 2, now()),
-      ('cmvmr5qlk002uqugb2oxdoelv', 'ChatGPT', 'chatgpt', 3, now()),
-      ('cmvmr5qll002vqugbw3oxk125', 'Adobe Creative Suite', 'adobe', 4, now());
+      ('tool-figma', 'Figma', 'figma', 1, now()),
+      ('tool-photoshop', 'Adobe Photoshop', 'photoshop', 2, now()),
+      ('tool-illustrator', 'Adobe Illustrator', 'illustrator', 3, now()),
+      ('tool-premier', 'Adobe Premier Pro', 'premier-pro', 4, now()),
+      ('tool-chatgpt', 'ChatGPT', 'chatgpt', 5, now()),
+      ('tool-claude', 'Claude', 'claude', 6, now()),
+      ('tool-gemini', 'Gemini', 'gemini', 7, now());
   end if;
 end $$;
 
--- ——— skills — 6 rows · inserted only when the table is empty (no unique key) · created_at = now() ———
+-- ——— skills — 8 rows · inserted only when the table is empty (no unique key) · created_at = now() ———
 do $$
 begin
   if not exists (select 1 from public.skills) then
     insert into public.skills (id, label, sort_order, created_at)
     values
-      ('cmvmr5qlm002wqugba2mhn4ld', 'UI/UX Design', 1, now()),
-      ('cmvmr5qln002xqugbv7x074ej', 'Creative Graphic Design', 2, now()),
-      ('cmvmr5qlo002yqugbito6hc1n', 'Branding Expert', 3, now()),
-      ('cmvmr5qlp002zqugb9n9y00kc', 'AI Assisted Frontend Dev', 4, now()),
-      ('cmvmr5qlp0030qugbp75bbse8', 'Social Media Marketer', 5, now()),
-      ('cmvmr5qlq0031qugbiuw8doly', 'Web Design', 6, now());
+      ('skill-01', 'UI/UX Design', 1, now()),
+      ('skill-02', 'Creative Graphic Design', 2, now()),
+      ('skill-03', 'Brand Strategy', 3, now()),
+      ('skill-04', 'AI Assisted Frontend Dev', 4, now()),
+      ('skill-05', 'Video Editing', 5, now()),
+      ('skill-06', 'Web Design', 6, now()),
+      ('skill-07', 'Brand Identity', 7, now()),
+      ('skill-08', 'Logo Design', 8, now());
   end if;
 end $$;
 

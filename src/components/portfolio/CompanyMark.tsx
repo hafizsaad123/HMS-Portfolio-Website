@@ -13,12 +13,17 @@
 import Image from "next/image";
 import type { CompanyMarkId } from "@/data/experience";
 
-/** Real logo files in /public/images/marks (natural pixel sizes). */
+/** Real logo files in /public/images/marks (natural pixel sizes).
+ *
+ * The novelops / ai-matterz files carry `?v=2` — their contents were
+ * corrected (swapped) after the first release, and the query string
+ * changes the /_next/image cache key so every visitor gets the fixed
+ * marks instead of a stale pre-swap copy from browser cache. */
 const logoFiles: Partial<Record<CompanyMarkId, { src: string; w: number; h: number }>> = {
-  "ai-matterz": { src: "/images/marks/ai-matterz.png", w: 93, h: 97 },
+  "ai-matterz": { src: "/images/marks/ai-matterz.png?v=2", w: 88, h: 75 },
   "uplynk-pk": { src: "/images/marks/uplynk-pk.png", w: 88, h: 89 },
   "surplus-pakistan": { src: "/images/marks/surplus-pakistan.png", w: 110, h: 65 },
-  novelops: { src: "/images/marks/novelops.png", w: 88, h: 75 },
+  novelops: { src: "/images/marks/novelops.png?v=2", w: 93, h: 97 },
   count3: { src: "/images/marks/count3.png", w: 110, h: 69 },
   simulationsx: { src: "/images/marks/simulationsx.png", w: 75, h: 95 },
 };
@@ -26,19 +31,18 @@ const logoFiles: Partial<Record<CompanyMarkId, { src: string; w: number; h: numb
 export function CompanyMark({ id, size = 24 }: { id: CompanyMarkId; size?: number }) {
   const logo = logoFiles[id];
 
-  // real brand logo — aspect preserved, fits inside a size×size box
+  // real brand logo — natural width/height attributes (exact intrinsic
+  // ratio, no rounding drift) with CSS locking the height and letting the
+  // width follow automatically, so the aspect ratio is always preserved.
   if (logo) {
-    const scale = size / Math.max(logo.w, logo.h);
-    const w = Math.max(1, Math.round(logo.w * scale));
-    const h = Math.max(1, Math.round(logo.h * scale));
     return (
       <Image
         src={logo.src}
         alt=""
-        width={w}
-        height={h}
-        sizes={`${size}px`}
+        width={logo.w}
+        height={logo.h}
         className="shrink-0 object-contain"
+        style={{ height: size, width: "auto" }}
         // purely decorative — the pill text carries the meaning
         aria-hidden
         draggable={false}

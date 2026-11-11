@@ -33,7 +33,11 @@ authoritative design references.
    ```
    (signs in as `admin@saad.design` / `saad2026`, or set `SUPABASE_SERVICE_ROLE_KEY`;
    already-uploaded files are skipped)
-4. Sign in at `/admin` with **admin@saad.design / saad2026** — change the
+4. Create the admin login in the **dashboard** (SQL can't do this — Supabase
+   rejects SQL-created auth users with "Database error"):
+   Supabase → **Authentication → Users → Add user** — email `admin@saad.design`,
+   password `saad2026`, tick **Auto Confirm User**.
+5. Sign in at `/admin` with **admin@saad.design / saad2026** — change the
    password in Settings on first use.
 
 Environment (`.env.local`):

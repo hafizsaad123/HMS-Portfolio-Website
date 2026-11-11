@@ -75,21 +75,20 @@ interface SocialRow {
 }
 
 const IMAGE_FIELDS = [
-  { key: "avatarPath" as const, title: "Profile picture", desc: "Sidebar avatar (small square)" },
-  { key: "portraitPath" as const, title: "Portrait", desc: "About page sign-off photo" },
-  { key: "signaturePath" as const, title: "Signature", desc: "Handwritten sign-off image" },
-  { key: "artworkPath" as const, title: "Sidebar artwork", desc: "Bottom-left line-art illustration" },
+  { key: "avatarPath" as const, title: "Profile picture", desc: "Home profile avatar (rounded square)" },
+  { key: "portraitPath" as const, title: "Portrait", desc: "Portrait photo — kept in the library from the previous design" },
+  { key: "signaturePath" as const, title: "Signature", desc: "Handwritten signature image — kept from the previous design" },
+  { key: "artworkPath" as const, title: "Artwork", desc: "Line-art illustration — kept from the previous design" },
 ];
 
-const TOOL_MARKS = ["figma", "claude", "chatgpt", "adobe"] as const;
+const TOOL_MARKS = ["figma", "photoshop", "illustrator", "premier-pro", "chatgpt", "claude", "gemini", "adobe"] as const;
 
 export default function AdminContentPage() {
   const [loading, setLoading] = useState(true);
   const [site, setSite] = useState<SiteForm | null>(null);
   const [texts, setTexts] = useState<Record<string, string>>({});
-  const [serviceLabels, setServiceLabels] = useState<string[]>(Array(12).fill(""));
   const [savingSite, setSavingSite] = useState(false);
-  const [savingAbout, setSavingAbout] = useState(false);
+  const [savingHome, setSavingHome] = useState(false);
   const [savingWork, setSavingWork] = useState(false);
 
   const [tools, setTools] = useState<ToolRow[]>([]);
@@ -103,19 +102,15 @@ export default function AdminContentPage() {
 
   async function load() {
     try {
-      const [siteRes, textsRes, toolsRes, skillsRes, socialsRes, servicesRes] = await Promise.all([
+      const [siteRes, textsRes, toolsRes, skillsRes, socialsRes] = await Promise.all([
         api<{ site: SiteForm }>("/api/admin/site"),
         api<{ texts: Record<string, string> }>("/api/admin/texts"),
         api<{ items: ToolRow[] }>("/api/admin/tools"),
         api<{ items: SkillRow[] }>("/api/admin/skills"),
         api<{ items: SocialRow[] }>("/api/admin/socials"),
-        api<{ items: { id: string; label: string }[] }>("/api/admin/services"),
       ]);
       setSite(siteRes.site);
       setTexts(textsRes.texts);
-      setServiceLabels(
-        Array.from({ length: 12 }, (_, i) => servicesRes.items[i]?.label ?? ""),
-      );
       setTools(toolsRes.items);
       setSkills(skillsRes.items);
       setSocials(socialsRes.items);
@@ -171,21 +166,6 @@ export default function AdminContentPage() {
       toast.error(e instanceof Error ? e.message : "Save failed.");
     } finally {
       setBusy(false);
-    }
-  }
-
-  async function saveServices() {
-    setSavingAbout(true);
-    try {
-      await api("/api/admin/services", {
-        method: "PATCH",
-        body: JSON.stringify({ labels: serviceLabels }),
-      });
-      toast.success("Services diagram saved.");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Save failed.");
-    } finally {
-      setSavingAbout(false);
     }
   }
 
@@ -333,7 +313,7 @@ export default function AdminContentPage() {
       <Tabs defaultValue="general">
         <TabsList className="h-auto w-full flex-wrap justify-start gap-1 bg-badge p-1 sm:w-max">
           <TabsTrigger value="general" className="px-4 py-2 text-[13px]">General</TabsTrigger>
-          <TabsTrigger value="about" className="px-4 py-2 text-[13px]">About Page</TabsTrigger>
+          <TabsTrigger value="home" className="px-4 py-2 text-[13px]">Home Page</TabsTrigger>
           <TabsTrigger value="work" className="px-4 py-2 text-[13px]">Work Page</TabsTrigger>
           <TabsTrigger value="lists" className="px-4 py-2 text-[13px]">Tools, Skills &amp; Socials</TabsTrigger>
         </TabsList>
@@ -423,8 +403,8 @@ export default function AdminContentPage() {
                   </div>
                   <div className="flex items-center justify-between rounded-xl border border-line px-4 py-2.5 sm:mt-7">
                     <div>
-                      <Label htmlFor="s-open" className="text-sm font-medium text-ink">Open to Work badge</Label>
-                      <p className="text-xs text-soft">Show the availability badge on About</p>
+                      <Label htmlFor="s-open" className="text-sm font-medium text-ink">Open to Work dot</Label>
+                      <p className="text-xs text-soft">Show the green availability dot next to your role on the home page</p>
                     </div>
                     <Switch id="s-open" checked={site.openToWork} onCheckedChange={(v) => setSite({ ...site, openToWork: v })} />
                   </div>
@@ -480,111 +460,72 @@ export default function AdminContentPage() {
           </div>
         </TabsContent>
 
-        {/* ————————————————— ABOUT ————————————————— */}
-        <TabsContent value="about" className="mt-5">
+        {/* ————————————————— HOME ————————————————— */}
+        <TabsContent value="home" className="mt-5">
           <div className="grid gap-5">
             <Card className="rounded-2xl">
               <CardHeader className="pb-4">
-                <CardTitle className="text-base text-ink">About page copy</CardTitle>
+                <CardTitle className="text-base text-ink">Home page section headings</CardTitle>
+                <p className="text-sm text-body">
+                  The section labels and card titles on the home page.
+                </p>
               </CardHeader>
               <CardContent className="grid gap-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="t-badge">Badge text</Label>
-                    <Input id="t-badge" value={texts["about.badge"] ?? ""} onChange={(e) => setText("about.badge", e.target.value)} />
+                    <Label htmlFor="t-tools">Tools heading</Label>
+                    <Input id="t-tools" value={texts["home.tools"] ?? ""} onChange={(e) => setText("home.tools", e.target.value)} placeholder="Tools" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="t-exphead">Experience heading</Label>
-                    <Input id="t-exphead" value={texts["about.experienceHeading"] ?? ""} onChange={(e) => setText("about.experienceHeading", e.target.value)} />
-                  </div>
-                </div>
-                <div className="grid gap-4 sm:grid-cols-[200px_1fr]">
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="t-herobold">Hero bold word</Label>
-                    <Input id="t-herobold" value={texts["about.hero.bold"] ?? ""} onChange={(e) => setText("about.hero.bold", e.target.value)} />
+                    <Label htmlFor="t-skills">Skills heading</Label>
+                    <Input id="t-skills" value={texts["home.skills"] ?? ""} onChange={(e) => setText("home.skills", e.target.value)} placeholder="Skills" />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="t-herorest">Hero sentence (the gray part)</Label>
-                    <Input id="t-herorest" value={texts["about.hero.rest"] ?? ""} onChange={(e) => setText("about.hero.rest", e.target.value)} />
+                    <Label htmlFor="t-exp">Experience heading</Label>
+                    <Input id="t-exp" value={texts["home.experience"] ?? ""} onChange={(e) => setText("home.experience", e.target.value)} placeholder="Experience" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="t-connect">Connect heading</Label>
+                    <Input id="t-connect" value={texts["home.connect"] ?? ""} onChange={(e) => setText("home.connect", e.target.value)} placeholder="Connect With Me" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="t-resumecard">Resume card title</Label>
+                    <Input id="t-resumecard" value={texts["home.resumeCard"] ?? ""} onChange={(e) => setText("home.resumeCard", e.target.value)} placeholder="My Resume" />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="t-projectscard">Projects card title</Label>
+                    <Input id="t-projectscard" value={texts["home.projectsCard"] ?? ""} onChange={(e) => setText("home.projectsCard", e.target.value)} placeholder="My Projects" />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="t-p1">Paragraph 1</Label>
-                  <Textarea id="t-p1" value={texts["about.p1"] ?? ""} onChange={(e) => setText("about.p1", e.target.value)} className="min-h-[88px]" />
+                  <Label htmlFor="t-copyright">Footer copyright line</Label>
+                  <Input id="t-copyright" value={texts["footer.copyright"] ?? ""} onChange={(e) => setText("footer.copyright", e.target.value)} />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="t-p2">Paragraph 2</Label>
-                  <Textarea id="t-p2" value={texts["about.p2"] ?? ""} onChange={(e) => setText("about.p2", e.target.value)} className="min-h-[88px]" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="t-connect">Footer connect line</Label>
-                  <Input id="t-connect" value={texts["about.connectLine"] ?? ""} onChange={(e) => setText("about.connectLine", e.target.value)} />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="t-ameta">Meta description (search engines)</Label>
-                  <Textarea id="t-ameta" value={texts["about.metaDescription"] ?? ""} onChange={(e) => setText("about.metaDescription", e.target.value)} className="min-h-[64px]" />
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() =>
+                      saveTexts(
+                        ["home.tools", "home.skills", "home.experience", "home.connect", "home.resumeCard", "home.projectsCard", "footer.copyright"],
+                        "Home page text saved — live on the site now.",
+                        setSavingHome,
+                      )
+                    }
+                    disabled={savingHome}
+                    className="h-11 gap-2 px-6"
+                  >
+                    {savingHome ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Saving…
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4" aria-hidden="true" /> Save Home Page
+                      </>
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
-
-            <Card className="rounded-2xl">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-base text-ink">Services network diagram</CardTitle>
-                <p className="text-sm text-body">
-                  The 12 nodes on the About page, in reading order. Nodes 3, 4 and 7 are the solid
-                  blocks — leave them empty to keep them clean.
-                </p>
-              </CardHeader>
-              <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {serviceLabels.map((label, i) => {
-                  const solid = i === 2 || i === 3 || i === 6;
-                  return (
-                    <div key={i} className="flex flex-col gap-1.5">
-                      <Label htmlFor={`svc-${i}`} className={solid ? "text-soft" : ""}>
-                        Node {i + 1} {solid ? "· solid block" : ""}
-                      </Label>
-                      <Input
-                        id={`svc-${i}`}
-                        value={label}
-                        disabled={solid}
-                        onChange={(e) =>
-                          setServiceLabels((prev) => prev.map((v, idx) => (idx === i ? e.target.value : v)))
-                        }
-                        placeholder={solid ? "(solid — no text)" : "Service name"}
-                      />
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-
-            <div className="flex flex-wrap justify-end gap-2">
-              <Button variant="outline" onClick={saveServices} disabled={savingAbout} className="h-11 gap-2">
-                <Save className="h-4 w-4" aria-hidden="true" /> Save Diagram Only
-              </Button>
-              <Button
-                onClick={async () => {
-                  await saveTexts(
-                    ["about.badge", "about.hero.bold", "about.hero.rest", "about.p1", "about.p2", "about.experienceHeading", "about.connectLine", "about.metaDescription"],
-                    "About page text saved.",
-                    setSavingAbout,
-                  );
-                  await saveServices();
-                }}
-                disabled={savingAbout}
-                className="h-11 gap-2 px-6"
-              >
-                {savingAbout ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Saving…
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" aria-hidden="true" /> Save About Page
-                  </>
-                )}
-              </Button>
-            </div>
           </div>
         </TabsContent>
 
@@ -636,7 +577,7 @@ export default function AdminContentPage() {
               <Card className="rounded-2xl">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-base text-ink">
-                    <Wrench className="h-4 w-4 text-brand" aria-hidden="true" /> Tools (sidebar)
+                    <Wrench className="h-4 w-4 text-brand" aria-hidden="true" /> Tools (home chips)
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-3">
@@ -693,7 +634,7 @@ export default function AdminContentPage() {
               <Card className="rounded-2xl">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-base text-ink">
-                    <Sparkles className="h-4 w-4 text-brand" aria-hidden="true" /> Skills (sidebar)
+                    <Sparkles className="h-4 w-4 text-brand" aria-hidden="true" /> Skills (home chips)
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-3">

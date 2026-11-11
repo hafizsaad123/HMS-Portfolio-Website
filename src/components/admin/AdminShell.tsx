@@ -6,7 +6,6 @@ import { useState } from "react";
 import {
   LayoutDashboard,
   FolderKanban,
-  Columns3,
   BriefcaseBusiness,
   FileText,
   Images,
@@ -29,7 +28,6 @@ import { createClient } from "@/utils/supabase/client";
 
 const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/sliders", label: "Home Sliders", icon: Columns3 },
   { href: "/admin/projects", label: "Projects", icon: FolderKanban },
   { href: "/admin/experience", label: "Experience", icon: BriefcaseBusiness },
   { href: "/admin/content", label: "Page Content", icon: FileText },

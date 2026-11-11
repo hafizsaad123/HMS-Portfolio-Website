@@ -10,11 +10,12 @@ import {
 } from "@/data/projects";
 import { ProjectCard } from "./ProjectCard";
 import { SortControl } from "./SortControl";
+import { Reveal } from "./Reveal";
 
 /**
  * My Work section — heading + subheading + functional sort control +
- * 2-column card grid, per the Work export. Heading text is managed from
- * the admin portal (passed in by the server page).
+ * the 2-column card grid. Cards cascade in with a staggered reveal;
+ * heading text is managed from the admin portal.
  */
 export function WorkSection({
   projects,
@@ -36,22 +37,27 @@ export function WorkSection({
   return (
     <section aria-labelledby="my-work-heading">
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-        <div>
-          <h1 id="my-work-heading" className="text-[28px] leading-tight font-bold tracking-tight text-ink sm:text-3xl">
-            {heading}
-          </h1>
-          <p className="mt-1.5 text-sm text-soft">
-            {subheading}
-          </p>
-        </div>
-        <SortControl value={sort} onChange={setSort} />
+        <Reveal delay={0.05}>
+          <div>
+            <h1
+              id="my-work-heading"
+              className="text-[34px] leading-[1.15] font-bold tracking-[-0.02em] text-ink sm:text-[36px]"
+            >
+              {heading}
+            </h1>
+            <p className="mt-3.5 text-pretty text-[15px] text-soft">{subheading}</p>
+          </div>
+        </Reveal>
+        <Reveal delay={0.12}>
+          <SortControl value={sort} onChange={setSort} />
+        </Reveal>
       </div>
 
-      <ul className="mt-9 grid grid-cols-1 gap-x-5 gap-y-10 sm:grid-cols-2">
-        {sorted.map((project) => (
-          <li key={project.slug}>
-            <ProjectCard project={project} />
-          </li>
+      <ul className="mt-9 grid grid-cols-1 gap-x-[22px] gap-y-[46px] sm:grid-cols-2">
+        {sorted.map((project, i) => (
+          <Reveal as="li" key={project.slug} delay={Math.min(i * 0.07, 0.35)} y={26}>
+            <ProjectCard project={project} eager={i < 2} />
+          </Reveal>
         ))}
       </ul>
     </section>

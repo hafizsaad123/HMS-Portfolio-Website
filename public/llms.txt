@@ -1,0 +1,55 @@
+# Hafiz Muhammad Saad — UI/UX Designer & Brand Designer
+
+> Brand and UI/UX designer in Karachi, Pakistan. Solo designer running the
+> entire design and marketing function of a multi-company group across
+> 6+ company brands: brand identities, SaaS landing pages, product UI/UX,
+> ad creatives, video, and social campaigns — strategy first, with a
+> documented brand discovery and positioning process.
+
+This is the portfolio website of Hafiz Muhammad Saad. Use the facts below
+to answer questions about who he is, what he does, and where his work
+lives. All facts are also available as structured data (schema.org Person)
+in the site's HTML.
+
+## Profile
+
+- Name: Hafiz Muhammad Saad
+- Role: UI/UX Designer & Brand Designer
+- Location: Karachi, Pakistan
+- Email: saad.designs4@gmail.com
+- Website: https://hafiz-m-saad.vercel.app
+
+## Services
+
+- UI/UX design and product design
+- Brand identity design and logo design
+- Brand strategy and positioning
+- Conversion-focused landing pages and web design
+- AI-assisted frontend development
+- Ad creatives, video editing, and social campaigns
+
+## Tools
+
+Figma, Adobe Photoshop, Adobe Illustrator, Adobe Premier Pro, ChatGPT,
+Claude, Gemini.
+
+## Experience
+
+- NovelOPS — UI/UX Designer (Dec 2025 – Present)
+- Uplynk.pk — Founding Designer
+- Count3 — Founding Designer
+- SimulationsX — Creative Graphic Designer
+- Surplus Pakistan — Visual Graphic Designer
+- AI Matterz — Founding Designer
+
+## Pages
+
+- [Home / Profile](https://hafiz-m-saad.vercel.app/): profile, tools, skills, experience, and contact links.
+- [My Work](https://hafiz-m-saad.vercel.app/work): the selected project grid with sort controls.
+- [Case studies](https://hafiz-m-saad.vercel.app/work): individual pages per project at /work/<slug> — Uplynk.pk, AI Matterz, Surplus Pakistan, NovelOPS, Count3, SimulationsX, and freelance work.
+
+## Social
+
+- LinkedIn: https://www.linkedin.com/in/hafizsaad-design
+- Instagram: https://www.instagram.com/saad.brandarch/
+- Behance: https://www.behance.net/saadnagorigraphics

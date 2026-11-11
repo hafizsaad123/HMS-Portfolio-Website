@@ -4,9 +4,10 @@
  * - Sessions live in cookies managed by @supabase/ssr and are refreshed by
  *   src/proxy.ts on every request.
  * - The portal is single-account: ANY signed-in user counts as the admin.
- *   The account is created in supabase/migration.sql (or via Supabase →
- *   Authentication → Users) and its password can be changed from the admin
- *   Settings page.
+ *   The account is created via the Supabase dashboard (Authentication →
+ *   Users → Add user, "Auto Confirm User" ticked). It can NEVER be created
+ *   with SQL — GoTrue rejects SQL-forged auth.users rows ("Database error").
+ *   Its password can be changed from the admin Settings page.
  * - API routes guard themselves with requireAdmin(); the proxy is only the
  *   fast outer gate for pages.
  */
