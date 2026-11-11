@@ -1,0 +1,639 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  /* Brand palette — sampled from the supplied Figma exports */
+  --color-brand: #8750f6; /* primary purple (sampled) */
+  --color-brand-soft: #c3a7ff; /* lavender */
+  --color-brand-blue: #5555ff; /* blue-purple pixel accent */
+  --color-brand-deep: #170146; /* near-black violet */
+  --color-brand-ink: #2a0e67; /* resume circle / dark diagram node */
+  --color-ink: #111827;
+  --color-body: #6b7280;
+  --color-soft: #767676;
+  --color-tile: #d9d9d9;
+  --color-badge: #f5f5f5;
+  --color-line: #e5e7eb;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: #ffffff;
+  --foreground: #111827;
+  --card: #ffffff;
+  --card-foreground: #111827;
+  --popover: #ffffff;
+  --popover-foreground: #111827;
+  --primary: #8750f6;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #111827;
+  --muted: #f5f5f5;
+  --muted-foreground: #898989;
+  --accent: #f5f5f5;
+  --accent-foreground: #111827;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #8750f6;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111827;
+  --sidebar-primary: #8750f6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #111827;
+  --sidebar-border: #e5e7eb;
+  --sidebar-ring: #8750f6;
+}
+
+/*
+  The portfolio is a light-only design (as supplied). A dark variant is kept
+  for shadcn compatibility but the site never toggles it.
+*/
+.dark {
+  --background: #111827;
+  --foreground: #ffffff;
+  --card: #111827;
+  --card-foreground: #ffffff;
+  --popover: #111827;
+  --popover-foreground: #ffffff;
+  --primary: #8750f6;
+  --primary-foreground: #ffffff;
+  --secondary: #1f2937;
+  --secondary-foreground: #ffffff;
+  --muted: #1f2937;
+  --muted-foreground: #9ca3af;
+  --accent: #1f2937;
+  --accent-foreground: #ffffff;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 16%);
+  --ring: #8750f6;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    /* Geist renders with its intended default OpenType features
+       (kerning + standard ligatures) — no font-specific overrides. */
+    font-feature-settings: "kern";
+  }
+  ::selection {
+    background: color-mix(in srgb, #8750f6 22%, white);
+  }
+}
+
+/* ————————————————————————————————————————————————
+   Home gallery — always-moving vertical sliders.
+   Four columns: outer two travel up, inner two travel down.
+   The track holds two identical lists; shifting by -50% of its own
+   height makes the loop seamless.
+   ———————————————————————————————————————————————— */
+@keyframes marquee-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes marquee-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.marquee-track {
+  animation-duration: var(--marquee-duration, 50s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.marquee-up {
+  animation-name: marquee-up;
+}
+
+.marquee-down {
+  animation-name: marquee-down;
+}
+
+/* ————————————————————————————————————————————————
+   RULE #1 — the sidebar never scrolls with the page.
+   At lg+ the page itself cannot scroll: only the main column does.
+   The sidebar is pinned to the viewport height. The bottom decor
+   (artwork / black tail) absorbs leftover space, shrinking fluidly;
+   on short viewports the rhythm compresses, the artwork hides, and
+   only as an invisible last resort does the content area scroll
+   internally (scrollbar hidden).
+   ———————————————————————————————————————————————— */
+.sidebar-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* …the sidebar rhythm is one consistent 28px gap at every width; it
+   compresses ONLY by viewport height, and gently (the pills/labels keep
+   their single size — only the section gap and outer padding breathe).
+   The generous 40px side padding NEVER compresses; top/bottom keep the
+   header below the top frame line (27px) and the last line above the
+   bottom frame band (33px line / 57px cascade). These plain rules win
+   over the layered Tailwind utilities. */
+@media (min-width: 1024px) and (max-height: 920px) {
+  .sidebar-body {
+    gap: 1.25rem; /* 20px */
+    padding-top: 2.25rem; /* 36px */
+    padding-bottom: 2.75rem; /* 44px */
+  }
+}
+@media (min-width: 1024px) and (max-height: 820px) {
+  .sidebar-body {
+    gap: 1rem; /* 16px */
+    padding-top: 2.125rem; /* 34px */
+    padding-bottom: 2.625rem; /* 42px */
+  }
+}
+
+/* Too short for the artwork to read — the frame band (gradient bar +
+   squares + cascades) still closes the card's bottom edge on its own */
+@media (min-width: 1024px) and (max-height: 1020px) {
+  .sidebar-art {
+    display: none;
+  }
+}
+
+@layer utilities {
+  /* Custom scrollbar for the main scrolling column */
+  .nice-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #d9d9d9 transparent;
+  }
+  .nice-scroll::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .nice-scroll::-webkit-scrollbar-thumb {
+    background: #d9d9d9;
+    border-radius: 999px;
+  }
+  .nice-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Respect reduced motion everywhere; sliders hold still */
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation-play-state: paused;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ————————————————————————————————————————————————
+   Rich text surface — the case study document.
+   ONE stylesheet for both surfaces so the admin WYSIWYG editor and the
+   public /work/<slug> page render identically (true WYSIWYG):
+     - editor: .ProseMirror.rich-surface (inside .rich-edit chrome)
+     - public: <div class="rich-surface"> (RichDocRenderer)
+   ———————————————————————————————————————————————— */
+
+.rich-surface {
+  color: var(--color-body);
+  font-size: 15.5px;
+  line-height: 1.85;
+  word-break: break-word;
+}
+
+/* base vertical rhythm */
+.rich-surface > * + * {
+  margin-top: 1.1rem;
+}
+.rich-surface > :first-child {
+  margin-top: 0;
+}
+
+/* headings */
+.rich-surface h2,
+.rich-surface h3,
+.rich-surface h4 {
+  color: var(--color-ink);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.rich-surface h2 {
+  font-size: 1.7rem;
+  margin-top: 3.4rem;
+}
+.rich-surface h3 {
+  font-size: 1.32rem;
+  margin-top: 2.8rem;
+}
+.rich-surface h4 {
+  font-size: 1.08rem;
+  margin-top: 2.3rem;
+}
+
+/* inline marks */
+.rich-surface strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.rich-surface u {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+.rich-surface s {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+.rich-surface a {
+  color: var(--color-brand);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.rich-surface a:hover {
+  color: var(--color-brand-deep);
+}
+.rich-surface code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-badge);
+  color: var(--color-brand-deep);
+  border-radius: 6px;
+  padding: 0.15em 0.42em;
+}
+
+/* code blocks */
+.rich-surface pre {
+  background: var(--color-ink);
+  color: #f9fafb;
+  border-radius: 14px;
+  padding: 1.15rem 1.4rem;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.7;
+  margin-top: 1.7rem;
+}
+.rich-surface pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* quotes */
+.rich-surface blockquote {
+  position: relative;
+  border: 1px solid var(--color-line);
+  background: rgba(245, 245, 245, 0.65);
+  border-radius: 16px;
+  padding: 1.45rem 1.65rem;
+  margin-top: 1.7rem;
+}
+.rich-surface blockquote::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.45rem;
+  height: calc(100% - 2.9rem);
+  width: 4px;
+  border-radius: 9999px;
+  background: var(--color-brand);
+}
+.rich-surface blockquote p {
+  font-weight: 500;
+  color: var(--color-ink);
+  font-size: 16.5px;
+  line-height: 1.7;
+}
+
+/* lists — purple square bullets / numbered chips */
+.rich-surface ul,
+.rich-surface ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rich-surface li {
+  margin-top: 0.55rem;
+}
+.rich-surface li > p {
+  margin: 0;
+}
+.rich-surface ul > li {
+  position: relative;
+  padding-left: 1.4rem;
+}
+.rich-surface ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.72em;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--color-brand);
+}
+.rich-surface ol {
+  counter-reset: rich-item;
+}
+.rich-surface ol > li {
+  position: relative;
+  padding-left: 2.15rem;
+}
+.rich-surface ol > li::before {
+  counter-increment: rich-item;
+  content: counter(rich-item);
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 1.45rem;
+  height: 1.45rem;
+  display: grid;
+  place-items: center;
+  border-radius: 9999px;
+  background: rgba(135, 80, 246, 0.1);
+  color: var(--color-brand);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* rules & tables */
+.rich-surface hr {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  margin-top: 2.4rem;
+}
+.rich-surface table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.7rem;
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.rich-surface th {
+  background: var(--color-badge);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.rich-surface th,
+.rich-surface td {
+  border: 1px solid var(--color-line);
+  padding: 0.55rem 0.85rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+/* media figures (rendered by React components on both surfaces) */
+.rich-surface .media-figure {
+  margin-top: 2.4rem;
+}
+.rich-surface .media-figure + .media-figure {
+  margin-top: 2.4rem;
+}
+
+/* ——— editor-only chrome (.rich-edit wraps the ProseMirror root) ——— */
+.rich-edit .ProseMirror {
+  outline: none;
+  min-height: 48rem;
+}
+.rich-edit .ProseMirror-selectednode {
+  outline: 3px solid rgba(135, 80, 246, 0.45);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.rich-edit .node-selected {
+  outline: 3px solid rgba(135, 80, 246, 0.35);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+.rich-edit .ProseMirror [data-drag-handle] {
+  cursor: grab;
+}
+.rich-edit .is-empty::before,
+.rich-edit .is-editor-empty::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #b0b4bb;
+}
+.rich-edit .ProseMirror-gapcursor::after {
+  border-top-color: var(--color-brand);
+}
+
+/* ————————————————————————————————————————————————
+   Skills spider web v2 (About page — rect nodes + elastic drag)
+   ———————————————————————————————————————————————— */
+.sw {
+  display: block;
+  overflow: visible;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.sw-measure {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* threads: hairline gray, they pass behind the nodes */
+.sw-line {
+  stroke: #d6d6d3;
+  stroke-width: 1.4;
+  pointer-events: none;
+  transition:
+    stroke 0.35s ease,
+    stroke-opacity 0.35s ease,
+    stroke-width 0.35s ease;
+}
+
+/* draw-in: hidden until JS mounts + scrolled into view (reduced motion / no-JS = fully drawn) */
+@media (prefers-reduced-motion: no-preference) {
+  .sw-live:not(.in-view) .sw-line {
+    stroke-dashoffset: var(--dash);
+    transition: none;
+  }
+  .sw-live.in-view .sw-line {
+    stroke-dashoffset: 0;
+    transition:
+      stroke-dashoffset 0.95s cubic-bezier(0.25, 0.8, 0.3, 1) var(--d, 0s),
+      stroke 0.35s ease,
+      stroke-opacity 0.35s ease,
+      stroke-width 0.35s ease;
+  }
+  .sw-live:not(.in-view) .sw-node-inner {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  .sw-live.in-view .sw-node-inner {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.6s ease var(--nd, 0s),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) var(--nd, 0s);
+  }
+}
+
+/* hover / drag: the touched node's threads light up brand-purple, the rest recede */
+.sw.hovering .sw-line {
+  stroke-opacity: 0.26;
+}
+.sw.hovering .sw-line.lit {
+  stroke-opacity: 1;
+  stroke: var(--color-brand);
+  stroke-width: 1.7;
+}
+
+/* nodes — grabbable rectangles */
+.sw-node {
+  cursor: grab;
+  touch-action: pan-y;
+}
+.sw.dragging,
+.sw.dragging .sw-node {
+  cursor: grabbing;
+}
+.sw-hit {
+  fill: transparent;
+  pointer-events: all;
+}
+.sw-rect {
+  fill: #ffffff;
+  stroke: var(--color-line);
+  stroke-width: 1.5;
+  transition: stroke 0.3s ease;
+}
+.sw-rect[data-accent="brand"] {
+  fill: var(--color-brand);
+  stroke: none;
+}
+.sw-rect[data-accent="deep"] {
+  fill: var(--color-brand-deep);
+  stroke: none;
+}
+.sw-node.is-hover .sw-rect:not([data-accent]) {
+  stroke: var(--color-brand);
+}
+.sw-edot {
+  fill: #09090b;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+.sw-node.is-hover .sw-edot,
+.sw-node.is-drag .sw-edot {
+  transform: scale(1.35);
+}
+.sw-label {
+  fill: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+/* drag lift: the grabbed rect rises slightly above the web */
+.sw-node-lift {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform 0.25s ease,
+    filter 0.25s ease;
+}
+.sw-node.is-drag .sw-node-lift {
+  transform: scale(1.03);
+  filter: drop-shadow(0 14px 22px rgba(17, 24, 39, 0.16));
+}
+
+/* reduced motion: everything rests in its final state, drag follows instantly */
+@media (prefers-reduced-motion: reduce) {
+  .sw-line {
+    stroke-dashoffset: 0 !important;
+    transition: none !important;
+  }
+  .sw-node-inner {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .sw-node-lift,
+  .sw-edot,
+  .sw-rect {
+    transition: none !important;
+  }
+  .sw-node.is-drag .sw-node-lift {
+    transform: none;
+    filter: none;
+  }
+}

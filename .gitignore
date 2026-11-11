@@ -1,0 +1,66 @@
+# See https://help.github.com/articles/ignoring-files/ for more info.
+
+# dependencies
+node_modules
+/.pnp
+.pnp.*
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug / logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+dev.log
+server.log
+
+# env files — set these in the Vercel dashboard instead
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# ─── sandbox-only files (never pushed to GitHub) ───
+.zscripts/
+.z-ai-config
+.claude
+tool-results/
+Caddyfile
+mini-services/
+examples/
+export-build/
+deploy-test/
+download/
+php-backend/
+upload/
+tests/
+worklog.md
+.initial_snapshot.json
+prompt
+local-*
+
+# legacy SQLite database (Supabase is the live database now)
+prisma/
+db/custom.db
+db/backups/
+
+# Z.ai skills (not part of the app)
+/skills/
